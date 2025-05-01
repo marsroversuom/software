@@ -5,3 +5,5 @@ In this repository we will share the software written for the rover, as well as 
 ## The hardware used:
 * Raspberry Pi 4B with raspi OS 64bit installed
 * Arduino UNO
+
+### Connect the grounds on the breakout board and the power supply!
