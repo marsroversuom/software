@@ -8,6 +8,9 @@
 // have a delay between each motor signal because without this it doesn't work
 const int delay_ms = 2;
 
+// since unsigned chars also range from 0 to 255 this is perfect to fetch duties for each of the 6 motors
+// duty1 is duties[0] and etc
+unsigned char duties[6] = {127, 127, 127, 127, 127, 127};
 
 void setup() {
   pinMode(pwm_2, OUTPUT);
@@ -42,8 +45,15 @@ void turn_motor2(int duty){
 }
 
 void loop() {
-  if (Serial.available()) {
-    char command = Serial.read();
-    
+  // Check if there are at least 6 bytes available in the serial buffer
+  if (Serial.available() >= 6) {
+    // Read 6 bytes and store them into the duties array
+    for (int i = 0; i < 6; i++) {
+      duties[i] = Serial.read(); // Store each byte into the duties array
+    }
   }
+
+  turn_motor1(duties[0]);
+  turn_motor2(duties[1]);
+
 }
