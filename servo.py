@@ -7,7 +7,7 @@ LENGTH = 400
 WIDTH = 300
 
 def get_radius(angle):
-    LENGTH / np.tan(np.deg2rad(angle))
+    return LENGTH / np.tan(np.deg2rad(angle))
 
 
 """
@@ -60,7 +60,7 @@ class Rover():
         elif self.angle < 0:
             # if turning to the right
             self.wheels[3].angle = self.angle
-            r1 = get_radiusself.wheels[3].angle)  # Inner radius
+            r1 = get_radius(self.wheels[3].angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
             r2 = get_radius(self.wheels[3].angle) - WIDTH / 2  # Outer radius
