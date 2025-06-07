@@ -49,7 +49,7 @@ class Rover():
         self.wheels = wheels
 
         self.max_turn_angle = max_turn_angle
-        self.angle = def_angle
+        self.angle = 0
 
     
     def turn(self, a):
@@ -73,11 +73,18 @@ class Rover():
             self.r2 = get_radius(self.angle) + WIDTH / 2  # Outer radius
             
             # Calculate the outer wheel angle (for outer front wheel)
-            self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle  # Outer right wheel angle
-            
+			
+            try:
+                self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle  # Outer right wheel angle
+            except Exception:
+                print("Max Angle Reached")
+
             # Rear wheels (steering in opposite direction for sharper turn)
             self.wheels[2].angle = 180 - self.wheels[0].angle  # Rear left wheel
+            
+            
             self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
+			
         elif self.angle < 0:
             # if turning to the right
             self.wheels[3].angle = self.angle + def_angle
@@ -87,11 +94,15 @@ class Rover():
             self.r2 = get_radius(self.angle) - WIDTH / 2  # Outer radius
             
             # Calculate the outer wheel angle (for outer front wheel)
-            self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
+            self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
             self.wheels[2].angle = 180 - self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
+            
+            try:
+                self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
+            except Exception:
+                print("Max Angle Reached")
 
 
 # Constants
