@@ -66,7 +66,10 @@ class Rover():
         # check which way the rover is turning
         if  self.angle > 0:
             # if turning to the left
-            self.wheels[0].angle = self.angle + def_angle
+            try:
+                  self.wheels[0].angle = self.angle + def_angle
+            except Exception:
+                  print("Yippee")
             self.r1 = get_radius(self.angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
@@ -87,7 +90,10 @@ class Rover():
 			
         elif self.angle < 0:
             # if turning to the right
-            self.wheels[3].angle = self.angle + def_angle
+            try:  
+                self.wheels[3].angle = self.angle + def_angle
+            except Exception:
+                  print("Yippee")
             self.r1 = get_radius(self.angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
