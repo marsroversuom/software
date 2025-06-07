@@ -86,6 +86,8 @@ async def connect(websocket):
     
     # Listen for commands
     while True:
+        outer_speed = 255
+        inner_speed = outer_speed/Rover.r2*Rover.r1
         try:
             # Wait for a command
             command = await websocket.recv(4)
@@ -99,6 +101,12 @@ async def connect(websocket):
                 serial.write(b'\x00\x00\x00\x00\x00\x00')
             else:
                 serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
+            if command[3] == "1":
+                right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
+                serial.write(right)
+            if command[3] == "1":
+                left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
+                serial.write(left)
 
         except websockets.exceptions.ConnectionClosed as e:
             print(f"[*] Connection Closed: {e}")
