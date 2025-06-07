@@ -60,6 +60,8 @@ class Rover():
         self.angle += a
         if abs(self.angle) > self.max_turn_angle:
             self.angle = (self.angle / abs(self.angle)) * self.max_turn_angle
+        if abs(self.angle) < 0:
+            self.angle = (self.angle / abs(self.angle)) * 0
 
         # check which way the rover is turning
         if  self.angle > def_angle:
@@ -74,8 +76,8 @@ class Rover():
             self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
-            self.wheels[2].angle = def_angle-self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = def_angle-self.wheels[3].angle  # Rear right wheel
+            self.wheels[2].angle = 180-self.wheels[0].angle  # Rear left wheel
+            self.wheels[5].angle = 180-self.wheels[3].angle  # Rear right wheel
         elif self.angle < def_angle:
             # if turning to the right
             self.wheels[3].angle = self.angle
@@ -88,8 +90,8 @@ class Rover():
             self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
-            self.wheels[2].angle = def_angle-self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = def_angle-self.wheels[3].angle  # Rear right wheel
+            self.wheels[2].angle = 180-self.wheels[0].angle  # Rear left wheel
+            self.wheels[5].angle = 180-self.wheels[3].angle  # Rear right wheel
 
 
 # Constants
