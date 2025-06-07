@@ -64,34 +64,34 @@ class Rover():
             self.angle = (self.angle / abs(self.angle)) * 0
 
         # check which way the rover is turning
-        if  self.angle > def_angle:
+        if  self.angle > 0:
             # if turning to the left
-            self.wheels[0].angle = self.angle
-            self.r1 = get_radius(self.wheels[0].angle)  # Inner radius
+            self.wheels[0].angle = self.angle + def_angle
+            self.r1 = get_radius(self.angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
-            self.r2 = get_radius(self.wheels[0].angle) + WIDTH / 2  # Outer radius
+            self.r2 = get_radius(self.angle) + WIDTH / 2  # Outer radius
             
             # Calculate the outer wheel angle (for outer front wheel)
-            self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
+            self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle  # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
-            self.wheels[2].angle = 180-self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = 180-self.wheels[3].angle  # Rear right wheel
-        elif self.angle < def_angle:
+            self.wheels[2].angle = 180 - self.wheels[0].angle  # Rear left wheel
+            self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
+        elif self.angle < 0:
             # if turning to the right
-            self.wheels[3].angle = self.angle
-            self.r1 = get_radius(self.wheels[3].angle)  # Inner radius
+            self.wheels[3].angle = self.angle + def_angle
+            self.r1 = get_radius(self.angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
-            self.r2 = get_radius(self.wheels[3].angle) - WIDTH / 2  # Outer radius
+            self.r2 = get_radius(self.angle) - WIDTH / 2  # Outer radius
             
             # Calculate the outer wheel angle (for outer front wheel)
             self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
-            self.wheels[2].angle = 180-self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = 180-self.wheels[3].angle  # Rear right wheel
+            self.wheels[2].angle = 180 - self.wheels[0].angle  # Rear left wheel
+            self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
 
 
 # Constants
@@ -126,11 +126,11 @@ async def connect(websocket):
 				pass
 				#serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
 			if command[3] == "1":       # d
-				right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
+				# right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
 				rover.turn(-1)
 				#serial.write(right)
 			if command[0] == "1":       # a
-				left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
+				# left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
 				rover.turn(1)
 				#serial.write(left)
 
