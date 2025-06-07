@@ -1,6 +1,10 @@
 import asyncio
 import websockets
 import serial
+import time
+from adafruit_servokit import ServoKit
+
+
 """This is a template code to be completed when we set up the servos completely"""
 
 import numpy as np
@@ -14,15 +18,25 @@ def get_radius(angle):
 
 
 """
-The way this will work is by asigning a wanted angle to the side it is turning to:
-So if based on the angle, we are turning left, we will asign the left side to turn that much
-Simillarly for turning right
+The way this will work is by assigning a wanted angle to the side it is turning to:
+So if based on the angle, we are turning left, we will assign the left side to turn that much
+Similarly for turning right
 
-And then we will calculate the radiuses neccessary for the inner and outer wheels.
-Based on this we will calculate and asign the angles to the servos
+And then we will calculate the radiuses necessary for the inner and outer wheels.
+Based on this we will calculate and assign the angles to the servos
 """
 
 # Example of how the servos would be controlled
+kit = ServoKit(channels=16)
+
+wheels = [
+    kit.servo[0],  # front-left
+    kit.servo[1],  # mid-left   (unused by Rover.turn())
+    kit.servo[2],  # rear-left
+    kit.servo[3],  # front-right
+    kit.servo[4],  # mid-right  (unused by Rover.turn())
+    kit.servo[5],  # rear-right
+]
 
 class Rover():
     def __init__(self, wheels, max_turn_angle):
@@ -38,7 +52,7 @@ class Rover():
     
     def turn(self, a):
         '''
-        turn the rover by `a` degrees counter clockwise
+        turn the rover by `a` degrees conter clockwise
         '''
 
         self.angle += a
@@ -75,6 +89,7 @@ class Rover():
             self.wheels[2].angle = -self.wheels[0].angle  # Rear left wheel
             self.wheels[5].angle = -self.wheels[3].angle  # Rear right wheel
 
+
 # Constants
 PORT = 8765
 
@@ -92,6 +107,8 @@ async def connect(websocket):
             # Wait for a command
             command = await websocket.recv(4)
             print(f"[*] Recieved: {command}")
+
+            Rover.turn(1)
 
             # Do something about the recieved command her
             
