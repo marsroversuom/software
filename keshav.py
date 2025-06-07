@@ -52,6 +52,9 @@ class Rover():
         self.max_turn_angle = max_turn_angle
         self.angle = 0
 
+        for i in range(len(wheels)):
+            kit.servo[i].angle = def_angle
+            
     
     def turn(self, a):
         '''
