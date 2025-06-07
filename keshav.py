@@ -9,6 +9,7 @@ from adafruit_servokit import ServoKit
 
 import numpy as np
 def_angle = 90
+turn_angle = 3
 
 LENGTH = 400
 WIDTH = 300
@@ -64,7 +65,7 @@ class Rover():
             self.angle = (self.angle / abs(self.angle)) * 0
 
         # check which way the rover is turning
-        if  self.angle > 0:
+        if  self.angle > 0:# and self.angle < self.max_turn_angle:
             # if turning to the left
             try:
                   self.wheels[0].angle = self.angle + def_angle
@@ -88,7 +89,7 @@ class Rover():
             
             self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
 			
-        elif self.angle < 0:
+        elif self.angle < 0:# and self.angle > -self.max_turn_angle:
             # if turning to the right
             try:  
                 self.wheels[3].angle = self.angle + def_angle
@@ -118,7 +119,7 @@ PORT = 8765
 serial = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
 
 async def connect(websocket):
-	rover = Rover(wheels=wheels, max_turn_angle=180)
+	rover = Rover(wheels=wheels, max_turn_angle=90)
 	print("[*] Connection Established!")
 	# Listen for commands
 	while True:
@@ -144,11 +145,11 @@ async def connect(websocket):
 				#serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
 			if command[3] == "1":       # d
 				# right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
-				rover.turn(-1)
+				rover.turn(-turn_angle)
 				#serial.write(right)
 			if command[0] == "1":       # a
 				# left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
-				rover.turn(1)
+				rover.turn(turn_angle)
 				#serial.write(left)
 
 		except websockets.exceptions.ConnectionClosed as e:
