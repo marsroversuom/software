@@ -125,11 +125,11 @@ async def connect(websocket):
 				#serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
 			if command[3] == "1":       # d
 				right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
-				rover.turn(rover, -1)
+				rover.turn(-1)
 				#serial.write(right)
 			if command[0] == "1":       # a
 				left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
-				rover.turn(rover, 1)
+				rover.turn(1)
 				#serial.write(left)
 
 		except websockets.exceptions.ConnectionClosed as e:
