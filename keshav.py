@@ -54,7 +54,7 @@ class Rover():
     
     def turn(self, a):
         '''
-        turn the rover by `a` degrees conter clockwise
+        turn the rover by `a` degrees counter clockwise
         '''
 
         self.angle += a
@@ -105,29 +105,31 @@ async def connect(websocket):
 	while True:
 		try:
 			outer_speed = 255
-			inner_speed = outer_speed/rover.r2*rover.r1
+			inner_speed = int(outer_speed/rover.r2*rover.r1)
 			# Wait for a command
 			command = await websocket.recv(4)
-			print(f"[*] Recieved: {command}")
+			print(f"[*] Received: {command}")
 
 			# Rover.turn(1)
 
-			# Do something about the recieved command her
+			# Do something about the received command her
 
-			if command[1] == "1":
+			if command[1] == "1":       # w
 				pass
 				#serial.write(b'\xff\xff\xff\xff\xff\xff')
-			elif command[2] == "1":
+			elif command[2] == "1":     # s
 				pass
 				#serial.write(b'\x00\x00\x00\x00\x00\x00')
 			else:
 				pass
 				#serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
-			if command[3] == "1":
+			if command[3] == "1":       # d
 				right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
+				rover.turn(rover, -1)
 				#serial.write(right)
-			if command[0] == "1":
+			if command[0] == "1":       # a
 				left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
+				rover.turn(rover, 1)
 				#serial.write(left)
 
 		except websockets.exceptions.ConnectionClosed as e:
