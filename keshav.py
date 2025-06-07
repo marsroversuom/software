@@ -74,8 +74,8 @@ class Rover():
             self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
-            self.wheels[2].angle = -self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = -self.wheels[3].angle  # Rear right wheel
+            self.wheels[2].angle = def_angle-self.wheels[0].angle  # Rear left wheel
+            self.wheels[5].angle = def_angle-self.wheels[3].angle  # Rear right wheel
         elif self.angle < def_angle:
             # if turning to the right
             self.wheels[3].angle = self.angle
@@ -88,8 +88,8 @@ class Rover():
             self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2))  # Outer right wheel angle
             
             # Rear wheels (steering in opposite direction for sharper turn)
-            self.wheels[2].angle = -self.wheels[0].angle  # Rear left wheel
-            self.wheels[5].angle = -self.wheels[3].angle  # Rear right wheel
+            self.wheels[2].angle = def_angle-self.wheels[0].angle  # Rear left wheel
+            self.wheels[5].angle = def_angle-self.wheels[3].angle  # Rear right wheel
 
 
 # Constants
@@ -146,4 +146,3 @@ async def main():
 # Start the Server
 if __name__ == "__main__":
     asyncio.run(main())
-
