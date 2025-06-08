@@ -122,13 +122,13 @@ PORT = 8765
 serial = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
 
 async def connect(websocket):
-	rover = Rover(wheels=wheels, max_turn_angle=90)
-	print("[*] Connection Established!")
+    rover = Rover(wheels=wheels, max_turn_angle=80)
+    print("[*] Connection Established!")
     # Listen for commands
     while True:
         try:
             outer_speed = 255
-            inner_speed = int(outer_speed/rover.r2*rover.r1)
+            inner_speed = int((127/rover.r2)*rover.r1) + 127
             # Wait for a command
             command = await websocket.recv(4)
             print(f"[*] Received: {command}")
@@ -152,6 +152,7 @@ async def connect(websocket):
                     rover.turn(turn_angle)
                     if command[1] == "1":       # wa
                         left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
+                        print("W+A" + str(left))
                         serial.write(left)
 
                     elif command[2] == "1":     # sa
@@ -164,9 +165,6 @@ async def connect(websocket):
 
                 elif command[2] == "1":     # s
                     serial.write(b'\x00\x00\x00\x00\x00\x00')
-
-
-
 
         except websockets.exceptions.ConnectionClosed as e:
             print(f"[*] Connection Closed: {e}")
