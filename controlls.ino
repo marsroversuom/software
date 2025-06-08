@@ -1,22 +1,20 @@
 // define pins for motors
-#define motor_1 8
-#define pwm_1 10
-
-#define motor_2 2
-#define pwm_2 3
+#define N_MOTORS = 6
+#define turn_on_pins[N_MOTORS] = {3, 5, 6, 9, 10, 11}
+#define pwm_pins[N_MOTORS] = {2, 4, 7, 8, 12, 13}
 
 // have a delay between each motor signal because without this it doesn't work
 const int delay_ms = 2;
 
 // since unsigned chars also range from 0 to 255 this is perfect to fetch duties for each of the 6 motors
 // duty1 is duties[0] and etc
-unsigned char duties[6] = {127, 127, 127, 127, 127, 127};
+unsigned char duties[N_MOTORS] = {127, 127, 127, 127, 127, 127};
 
 void setup() {
-  pinMode(pwm_2, OUTPUT);
-  pinMode(pwm_1, OUTPUT);
-  pinMode(motor_1, OUTPUT);
-  pinMode(motor_2, OUTPUT);
+  for(int i = 0; i < N_MOTORS; i ++){
+    pinMode(turn_on_pins[i], OUTPUT);
+    pinMode(pwn_pins[i], OUTPUT);
+  }
   Serial.begin(9600);
 }
 
@@ -26,21 +24,15 @@ void setup() {
 
 // duty ranges from 0 to 255
 // 0 turns the motors CW while 255 CCW max speed. To stop use duty=127 or 128.
-
-void turn_motor1(int duty){
-  digitalWrite(motor_1, HIGH);
-  digitalWrite(motor_2, LOW);
-  analogWrite(pwm_1, duty);
-  analogWrite(pwm_2, 0);
-  delay(delay_ms);
-}
-
-
-void turn_motor2(int duty){
-  digitalWrite(motor_1, LOW);
-  digitalWrite(motor_2, HIGH);
-  analogWrite(pwm_2, duty);
-  analogWrite(pwm_1, 0);
+void run_motor(int motor_number, int duty){
+  //turning every motor off
+  for(int i = 0; i < N_MOTORS; i ++)
+      digitalWrite(turn_on_pins[i], LOW);
+  //turning the required motor on if the duty is not 127
+  if(duty != 127){
+    digitalWrite(turn_on_pins[motor_number], HIGH);
+    analogWrite(pwm_pins[motor_number], duty);
+  }
   delay(delay_ms);
 }
 
@@ -50,10 +42,7 @@ void loop() {
     // Read 6 bytes and store them into the duties array
     for (int i = 0; i < 6; i++) {
       duties[i] = Serial.read(); // Store each byte into the duties array
+      run_motor(i, duties[i]);
     }
   }
-
-  turn_motor1(duties[0]);
-  turn_motor2(duties[1]);
-
 }
