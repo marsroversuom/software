@@ -124,40 +124,53 @@ serial = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
 async def connect(websocket):
 	rover = Rover(wheels=wheels, max_turn_angle=90)
 	print("[*] Connection Established!")
-	# Listen for commands
-	while True:
-		try:
-			outer_speed = 255
-			inner_speed = int(outer_speed/rover.r2*rover.r1)
-			# Wait for a command
-			command = await websocket.recv(4)
-			print(f"[*] Received: {command}")
+    # Listen for commands
+    while True:
+        try:
+            outer_speed = 255
+            inner_speed = int(outer_speed/rover.r2*rover.r1)
+            # Wait for a command
+            command = await websocket.recv(4)
+            print(f"[*] Received: {command}")
 
-			# Rover.turn(1)
+            # Do something about the received command her
 
-			# Do something about the received command her
+            if command[1] != "1" and command[2] != "1":
+                serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
+            else:
+                if command[3] == "1":       # d
+                    rover.turn(-turn_angle)
+                    if command[1] == "1":       # wd
+                        right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
+                        serial.write(right)
 
-			if command[1] == "1":       # w
-				pass
-				#serial.write(b'\xff\xff\xff\xff\xff\xff')
-			elif command[2] == "1":     # s
-				pass
-				#serial.write(b'\x00\x00\x00\x00\x00\x00')
-			else:
-				pass
-				#serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
-			if command[3] == "1":       # d
-				# right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
-				rover.turn(-turn_angle)
-				#serial.write(right)
-			if command[0] == "1":       # a
-				# left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
-				rover.turn(turn_angle)
-				#serial.write(left)
+                    elif command[2] == "1":     # sd
+                        right = bytearray([255-outer_speed, 255-outer_speed, 255-outer_speed, 255-inner_speed, 255-inner_speed, 255-inner_speed])
+                        serial.write(right)
 
-		except websockets.exceptions.ConnectionClosed as e:
-			print(f"[*] Connection Closed: {e}")
-			break
+                elif command[0] == "1":       # a
+                    rover.turn(turn_angle)
+                    if command[1] == "1":       # wa
+                        left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
+                        serial.write(left)
+
+                    elif command[2] == "1":     # sa
+                        left = bytearray([255-inner_speed, 255-inner_speed, 255-inner_speed, 255-outer_speed, 255-outer_speed, 255-outer_speed])
+                        serial.write(left)
+
+
+                elif command[1] == "1":       # w
+                    serial.write(b'\xff\xff\xff\xff\xff\xff')
+
+                elif command[2] == "1":     # s
+                    serial.write(b'\x00\x00\x00\x00\x00\x00')
+
+
+
+
+        except websockets.exceptions.ConnectionClosed as e:
+            print(f"[*] Connection Closed: {e}")
+            break
 
 
 async def main():
