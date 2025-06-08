@@ -54,11 +54,16 @@ class Rover():
 
         for i in range(len(wheels)):
             kit.servo[i].angle = def_angle
+
+        self.v_left = 127
+        self.v_right = 127
+
             
     
     def turn(self, a):
         '''
         turn the rover by `a` degrees counter clockwise
+        changes speeds self.v_left and self.v_right based on self.angle
         '''
 
         self.angle += a
@@ -68,51 +73,60 @@ class Rover():
             self.angle = (self.angle / abs(self.angle)) * 0
 
         # check which way the rover is turning
-        if  self.angle > 0:# and self.angle < self.max_turn_angle:
+        if  self.angle > 0:
             # if turning to the left
-            try:
-                  self.wheels[0].angle = self.angle + def_angle
-            except Exception:
-                  print("Yippee")
+            
             self.r1 = get_radius(self.angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
             self.r2 = get_radius(self.angle) + WIDTH / 2  # Outer radius
-            
-            # Calculate the outer wheel angle (for outer front wheel)
-			
+
             try:
-                self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle  # Outer right wheel angle
+                  self.wheels[0].angle = self.angle + def_angle
+                  
+                  # Calculate the outer wheel angle (for outer front wheel)
+                  self.wheels[3].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle  # Outer right wheel angle
+                  
+                  # Sets wheel speeds based on angle
+                  self.v_left = 255
+                  self.v_right = 127* int(1 + self.r1/self.r2)
+            
             except Exception:
-                print("Max Angle Reached")
+                  print("Max Angle Reached")
 
             # Rear wheels (steering in opposite direction for sharper turn)
             self.wheels[2].angle = 180 - self.wheels[0].angle  # Rear left wheel
-            
-            
             self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
+            
 			
-        elif self.angle < 0:# and self.angle > -self.max_turn_angle:
+        elif self.angle < 0:
             # if turning to the right
-            try:  
-                self.wheels[3].angle = self.angle + def_angle
-            except Exception:
-                  print("Yippee")
+            
             self.r1 = get_radius(self.angle)  # Inner radius
     
             # Calculate the outer radius (for outer front wheel)
             self.r2 = get_radius(self.angle) - WIDTH / 2  # Outer radius
-            
-            # Calculate the outer wheel angle (for outer front wheel)
-            self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle # Outer right wheel angle
+            try:  
+                self.wheels[3].angle = self.angle + def_angle
+                
+                # Calculate the outer wheel angle (for outer front wheel)
+                self.wheels[0].angle = np.rad2deg(np.arctan(LENGTH / self.r2)) + def_angle # Outer right wheel angle
+
+                # Sets wheel speeds based on angle
+                self.v_left = 127* int(1 + self.r1/self.r2)
+                self.v_right = 255
+
+            except Exception:
+                  print("Max Angle Reached")
             
             # Rear wheels (steering in opposite direction for sharper turn)
             self.wheels[2].angle = 180 - self.wheels[0].angle  # Rear left wheel
-            
-            try:
-                self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
-            except Exception:
-                print("Max Angle Reached")
+            self.wheels[5].angle = 180 - self.wheels[3].angle  # Rear right wheel
+                
+        else:
+            # Full speed facing forwards
+            self.v_left = 255
+            self.v_right = 255
 
 
 # Constants
@@ -127,44 +141,33 @@ async def connect(websocket):
     # Listen for commands
     while True:
         try:
-            outer_speed = 255
-            inner_speed = int((127/rover.r2)*rover.r1) + 127
+            
             # Wait for a command
             command = await websocket.recv(4)
             print(f"[*] Received: {command}")
 
             # Do something about the received command her
+            if command[3] == "1":       # d
+                rover.turn(-turn_angle)
+                    
+            elif command[0] == "1":       # a
+                rover.turn(turn_angle)
 
-            if command[1] != "1" and command[2] != "1":
+            if command[1] == "1":       # w
+                serial.write(bytearray[rover.v_left, rover.v_left, rover.v_left, rover.v_right, rover.v_right, rover.v_right])
+            
+            elif command[2] == "1":     # s
+                serial.write(bytearray[255-rover.v_left, 255-rover.v_left, 255-rover.v_left, 255-rover.v_right, 255-rover.v_right, 255-rover.v_right])
+            
+            else:       # not moving
                 serial.write(b"\x7f\x7f\x7f\x7f\x7f\x7f")
-            else:
-                if command[3] == "1":       # d
-                    rover.turn(-turn_angle)
-                    if command[1] == "1":       # wd
-                        right = bytearray([outer_speed, outer_speed, outer_speed, inner_speed, inner_speed, inner_speed])
-                        serial.write(right)
+            
+                
+                    
 
-                    elif command[2] == "1":     # sd
-                        right = bytearray([255-outer_speed, 255-outer_speed, 255-outer_speed, 255-inner_speed, 255-inner_speed, 255-inner_speed])
-                        serial.write(right)
+                
 
-                elif command[0] == "1":       # a
-                    rover.turn(turn_angle)
-                    if command[1] == "1":       # wa
-                        left = bytearray([inner_speed, inner_speed, inner_speed, outer_speed, outer_speed, outer_speed])
-                        print("W+A" + str(left))
-                        serial.write(left)
-
-                    elif command[2] == "1":     # sa
-                        left = bytearray([255-inner_speed, 255-inner_speed, 255-inner_speed, 255-outer_speed, 255-outer_speed, 255-outer_speed])
-                        serial.write(left)
-
-
-                elif command[1] == "1":       # w
-                    serial.write(b'\xff\xff\xff\xff\xff\xff')
-
-                elif command[2] == "1":     # s
-                    serial.write(b'\x00\x00\x00\x00\x00\x00')
+                
 
         except websockets.exceptions.ConnectionClosed as e:
             print(f"[*] Connection Closed: {e}")
