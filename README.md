@@ -11,7 +11,8 @@ Here we will share the code for the raspberry pi, as well as some basic document
 
 2. Power the Raspberry Pi.
 
-3. You should now be able to see the "rover" wifi network in the list of networks you can connect to. Check your "available networks" under device settings if you can't see it listed. Connect to the "rover" wifi. 
+3. You should now be able to see the "rover" wifi network in the list of networks you can connect to. Check your "available networks" under device settings if you can't see it listed. Connect to the "rover" wifi. <br />
+### The IP address should always be <ins>10.20.1.1</ins>, if it doesn't work follow the instruction below:
 
 	**For windows**
 	- open terminal and run the following command:
@@ -19,13 +20,13 @@ Here we will share the code for the raspberry pi, as well as some basic document
 	- look for the Raspberry Pi or the "DHCP address" (it should look something like ``` xx.xx.x.x ```)
 	
 	**For Mac**
-	- to be completed
+	- go to Settings -> Network -> Click Details -> Scroll down to Router, that's the IP address
 
-4. Enter this address into the dialog box "VNC server: " and click "Connect"
+5. Enter this address into the dialog box "VNC server: " and click "Connect"
 
-5. The program should close and a new dialog box with username and password will appear.
+6. The program should close and a new dialog box with username and password will appear.
 
-6. Fill in the username and password (check discord for further details), a new window with the Raspberry Pi will open.
+7. Fill in the username and password (check discord for further details), a new window with the Raspberry Pi will open.
 
 ## Guide: Setting up the python server on the Raspberry Pi
 
