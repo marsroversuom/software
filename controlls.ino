@@ -10,10 +10,10 @@ const int delay_ms = 2;
 unsigned char duties[6] = {127, 127, 127, 127, 127, 127};
 
 void setup() {
-  pinMode(pwm_pins[0], OUTPUT);
-  pinMode(pwm_pins[5], OUTPUT);
-  pinMode(turn_on_pins[0], OUTPUT);
-  pinMode(turn_on_pins[5], OUTPUT);
+  for(int i = 0; i < N_MOTORS; i ++){
+    pinMode(pwm_pins[i], OUTPUT);
+    pinMode(turn_on_pins[i], OUTPUT);
+  }
   Serial.begin(9600);
 }
 
@@ -48,9 +48,8 @@ void loop() {
       duties[i] = Serial.read(); // Store each byte into the duties array
     }
   }
-
+  
   for(int i = 0; i < N_MOTORS; i ++){
     run_motor(i, duties[i]);
   }
-
 }
