@@ -14,10 +14,10 @@ socket.onerror = (error) => {
 
 
 let keys = {
-    'w':false,
-    'a':false,
-    's':false,
-    'd':false,
+    'w':'0',
+    'a':'0',
+    's':'0',
+    'd':'0',
 }
 
 // Keyboard controls (W, A, S, D)
@@ -25,25 +25,21 @@ document.addEventListener('keydown', (event) => {
     if (socket.readyState === WebSocket.OPEN) {
         switch (event.key) {
             case 'w':  // Move forward
-                keys.w = true
+                keys.w = '1'
                 break;
             case 'a':  // Turn left
-                keys.a = true
+                keys.a = '1'
                 break;
             case 's':  // Stop
-                keys.s = true
+                keys.s = '1'
                 break;
             case 'd':  // Turn right (optional)
-                keys.d = true
+                keys.d = '1'
                 break;
             default:
                 break;
         }
-        if (keys.w){
-            socket.send("1")
-        } else {
-            socket.send("0")
-        }
+        socket.send(keys.a + keys.w + keys.s + keys.d)
         // socket.send(JSON.stringify(keys))
     }
 });
@@ -53,25 +49,22 @@ document.addEventListener('keyup', (event) => {
     if (socket.readyState === WebSocket.OPEN) {
         switch (event.key) {
             case 'w':  // Move forward
-                keys.w = false
+                keys.w = '0'
                 break;
             case 'a':  // Turn left
-                keys.a = false
+                keys.a = '0'
                 break;
             case 's':  // Stop
-                keys.s = false
+                keys.s = '0'
                 break;
             case 'd':  // Turn right (optional)
-                keys.d = false
+                keys.d = '0'
                 break;
             default:
                 break;
         }
-        if (keys.w){
-            socket.send("1")
-        } else {
-            socket.send("0")
-        }
+       socket.send(keys.a + keys.w + keys.s + keys.d)
+
         // socket.send(JSON.stringify(keys))
     }
 });
